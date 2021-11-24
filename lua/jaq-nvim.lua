@@ -1,17 +1,88 @@
 local M = {}
 local vim = vim
 
-local defaults = {
-	mapping = "<Leader>r",
-	run_on_save = false,
-	cmds = { lua = "!lua %", python = "!python3 %", javascript = "!node %", typescript = "!node %", markdown = "Glow", vim = "source %", sh = "!sh %"}
+local config = {
+	cmds = {
+		default  = "float",
+		internal = {},
+		external = {}
+	},
+	ui = {
+		startinsert = false,
+		float = {
+			border    = "none",
+			height    = 0.8,
+			width     = 0.8,
+			border_hl = "FloatBorder",
+			float_hl  = "Normal",
+			blend     = 0
+		},
+		terminal = {
+			position = "bot",
+			size     = 10
+		}
+	}
 }
 
-function M.setup(user_options) defaults = vim.tbl_deep_extend('force', defaults, user_options) end
-
-function M.jaq()
-	for lang, cmds in next, defaults.cmds, nil do vim.cmd ("autocmd FileType " .. lang .. " :command! -buffer Jaq :" .. cmds) end
-	if defaults.run_on_save == true then vim.cmd("autocmd BufWritePost * Jaq") end
-	vim.api.nvim_set_keymap("n", defaults.mapping, ":Jaq<CR>", { silent = true } )
+local function floatingWin(cmd)
+	local Buf = vim.api.nvim_create_buf(false, true)
+	local win_height = math.ceil(vim.api.nvim_get_option("lines") * config.ui.float.height - 4)
+	local win_width = math.ceil(vim.api.nvim_get_option("columns") * config.ui.float.width)
+	local row = math.ceil((vim.api.nvim_get_option("lines") - win_height) / 2 - 1)
+	local col = math.ceil((vim.api.nvim_get_option("columns") - win_width) / 2)
+	local opts = { style = "minimal", relative = "editor", border = config.ui.float.border, width = win_width, height = win_height, row = row, col = col }
+	local Win = vim.api.nvim_open_win(Buf, true, opts)
+	vim.fn.termopen(cmd)
+	if config.ui.startinsert then vim.cmd("startinsert") end
+	vim.api.nvim_win_set_option(Win, 'winhl', 'Normal:' .. config.ui.float.float_hl .. ',FloatBorder:' .. config.ui.float.border_hl)
+	vim.api.nvim_win_set_option(Win, 'winblend', config.ui.float.blend)
+	vim.api.nvim_buf_set_keymap(Buf, 'n', '<ESC>', '<C-\\><C-n>:lua vim.api.nvim_win_close(Win, true)<CR>', { silent = true })
+	vim.api.nvim_buf_set_keymap(Buf, 'n', 'gf', '<C-w>gf', { silent = true })
 end
+
+function M.setup(user_options) config = vim.tbl_deep_extend('force', config, user_options) end
+
+function M.Jaq(type)
+	local ran = false
+	for lang, cmd in next, config.cmds.internal, nil do
+		cmd = cmd:gsub("%%", vim.fn.expand('%'))
+		cmd = cmd:gsub("#", vim.fn.expand('#'))
+		cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'))
+		cmd = cmd:gsub("$file", vim.fn.expand('%'))
+		cmd = cmd:gsub("$fileAlt", vim.fn.expand('#'))
+		cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
+		if vim.bo.filetype == lang then
+			vim.cmd(cmd)
+			ran = true
+			break
+		end
+	end
+	type = type or config.cmds.default
+	for lang, cmd in next, config.cmds.external, nil do
+		if vim.bo.filetype == lang then
+			cmd = cmd:gsub("%%", vim.fn.expand('%'))
+			cmd = cmd:gsub("#", vim.fn.expand('#'))
+			cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'))
+			cmd = cmd:gsub("$file", vim.fn.expand('%'))
+			cmd = cmd:gsub("$fileAlt", vim.fn.expand('#'))
+			cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
+			if type == "float" then
+				floatingWin(cmd)
+				ran = true
+				break
+			elseif type == "bang" then
+				vim.cmd("!" .. cmd)
+				ran = true
+				break
+			elseif type == "term" then
+				vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new | term " .. cmd)
+				if config.ui.startinsert then vim.cmd("startinsert") end
+				ran = true
+				break
+			end
+		end
+	end
+	if not ran then vim.cmd("echohl ErrorMsg | echo 'Error: No config for " .. vim.bo.filetype .. "' | echohl None") end
+end
+
 return M

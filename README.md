@@ -3,52 +3,119 @@
 [![Last Commit](https://img.shields.io/github/last-commit/is0n/jaq-nvim)](https://github.com/is0n/jaq-nvim/pulse)
 [![GitHub Open Issues](https://img.shields.io/github/issues/is0n/jaq-nvim.svg)](https://github.com/is0n/jaq-nvim/issues/)
 [![GitHub Closed Issues](https://img.shields.io/github/issues-closed/is0n/jaq-nvim.svg)](https://github.com/is0n/jaq-nvim/issues?q=is%3Aissue+is%3Aclosed)
-[![GitHub Contributors](https://img.shields.io/github/contributors/is0n/jaq-nvim.svg)](https://github.com/is0n/jaq-nvim/graphs/contributors/)
-[![GitHub](https://img.shields.io/github/license/is0n/jaq-nvim?logo=GNU)](https://github.com/is0n/jaq-nvim/blob/master/LICENSE)
+[![GitHub License](https://img.shields.io/github/license/is0n/jaq-nvim?logo=GNU)](https://github.com/is0n/jaq-nvim/blob/master/LICENSE)
+[![Lua](https://img.shields.io/badge/Lua-2C2D72?logo=lua&logoColor=white)](https://github.com/is0n/fm-nvim/search?l=lua)
 
-# jaq-nvim
-`jaq-nvim` is just another quickrun plugin for Neovim that's written in less than **20 lines of Lua**. Inspired by [quickrun.vim](https://github.com/D0n9X1n/quickrun.vim).
+<h1 align='center'>jaq-nvim</h1>
+
+`jaq-nvim` is **J**ust **A**nother **Q**uickrun plugin for Neovim that's written in less than **100 lines of Lua**. Inspired by [quickrun.vim](https://github.com/D0n9X1n/quickrun.vim).
 
 ## Demo:
-![Demo](Demo.gif)
+![Demo](https://user-images.githubusercontent.com/57725322/143307370-861066e8-cae0-4641-8185-25c031baafbb.gif)
+
+<p>
+<details>
+<summary>Screenshots</summary>
+
+##### Run C++ Code w/ :Jaq Bang
+![Jaq Bang](https://user-images.githubusercontent.com/57725322/143304594-45df53fc-8aeb-424b-b688-70779b7c9533.png)
+##### Run C++ Code w/ :Jaq Float
+![Jaq Float](https://user-images.githubusercontent.com/57725322/143304610-053d2593-53a9-4839-9bb3-c61e0de66022.png)
+##### Run C++ Code w/ :Jaq Term
+![Jaq Term](https://user-images.githubusercontent.com/57725322/143304617-b0d13aa6-368a-4968-8b89-909d6ddbcf60.png)
+
+</details>
+</p>
 
 ## Installation:
 * [packer.nvim](https://github.com/wbthomason/packer.nvim):
 	```lua
 	use {'is0n/jaq-nvim'}
 	```
-* [vim-plug](https://github.com/junegunn/vim-plug):
-	```vim
-	Plug 'is0n/jaq-nvim'
-	```
-* [Vundle](https://github.com/VundleVim/Vundle.vim)
-	```vim
-	Plugin 'is0n/jaq-nvim'
-	```
-* [NeoBundle](https://github.com/Shougo/neobundle.vim)
-	```vim
-	NeoBundle 'is0n/jaq-nvim'
-	```
 
 ## Configuration:
+The following is an example config...
+
 ```lua
 require('jaq-nvim').setup{
-	-- Mapping used to run :Jaq
-	mapping = "<Leader>r",
-
-	-- Set to true if you want Jaq to run after :w
-	run_on_save = false
-
-	-- Put the name of the language first and then the commands you want to use
+	-- Commands used with 'Jaq'
 	cmds = {
-		-- Example
-		ruby = "!ruby %"
+		-- Default UI used (see `Usage` for options)
+		default = "float"
+
+		-- Uses external commands such as 'g++' and 'cargo'
+		external = {
+			typescript = "deno run %",
+			javascript = "node %",
+			markdown = "glow %",
+			python = "python3 %",
+			rust = "rustc % && ./$fileBase && rm $fileBase",
+			cpp = "g++ % -o $fileBase && ./$fileBase",
+			go = "go run %",
+			sh = "sh %",
+		},
+
+		-- Uses internal commands such as 'source' and 'luafile'
+		internal = {
+			lua = "luafile %",
+			vim = "source %"
+		},
+	},
+
+	-- UI settings
+	ui = {
+		-- Start in insert mode
+		startinsert = false,
+
+		-- Floating Window settings
+		float = {
+			-- Floating window border (see ':h nvim_open_win')
+			border    = "none",
+
+			-- Num from `0 - 1` for measurements
+			height    = 0.8,
+			width     = 0.8,
+
+			-- Highlight group for floating window/border (see ':h winhl')
+			border_hl = "FloatBorder",
+			float_hl  = "Normal",
+
+			-- Floating Window Transparency (see ':h winblend')
+			blend     = 0
+		},
+
+		terminal = {
+			-- Position of terminal
+			position = "bot",
+
+			-- Size of terminal
+			size     = 10
+		}
 	}
 }
 ```
 
 ## Usage:
-You can either use the default mapping `<Leader>r` to run Jaq or simply type in `:Jaq`.
+`:Jaq` by default uses the `float` option to run code, however, both `bang` and `term` are appropriate terms. Append any of the following terms to the end of `:Jaq` to override the default value.
+
+* `float` • opens a floating window with `:lua vim.api.nvim_open_win()`
+* `term` • opens a terminal with `:terminal`
+* `bang` • opens a small window with `:!`
+
+Example: `:Jaq bang`
+
+The commands for `:Jaq` also have certain variables that can help in running code. You can put any of the following in your `require('jaq-nvim').setup()`...
+
+* `%` • Current File
+* `#` • Alternate File
+* `$file` • Current File
+* `$fileAlt` • Alternate File
+* `$fileBase` • Basename of File (no extension)
+* `$dir` • Current Working Directory (CWD)
+
+## Similar Plugins:
+* [pianocomposer321/yabs.nvim](https://github.com/pianocomposer321/yabs.nvim) • "Yet Another Build System for Neovim, written in Lua."
+* [CRAG666/code_runner.nvim](https://github.com/CRAG666/code_runner.nvim) • "The best code runner you could have [...]"
 
 <div align="center" id="madewithlua">
 	

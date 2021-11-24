@@ -1,1 +1,1 @@
-vim.cmd [[ lua require('jaq-nvim').jaq() ]]
+vim.cmd [[ command! -nargs=? Jaq :lua require('jaq-nvim').Jaq(<f-args>) ]]
