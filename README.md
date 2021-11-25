@@ -109,6 +109,7 @@ The commands for `:Jaq` also have certain variables that can help in running cod
 * `%` • Current File
 * `#` • Alternate File
 * `$file` • Current File
+* `$filePath` • Path to Current File
 * `$fileAlt` • Alternate File
 * `$fileBase` • Basename of File (no extension)
 * `$dir` • Current Working Directory (CWD)
