@@ -25,19 +25,20 @@ local config = {
 }
 
 local function floatingWin(cmd)
-	local Buf = vim.api.nvim_create_buf(false, true)
+	local buf = vim.api.nvim_create_buf(false, true)
+	vim.api.nvim_buf_set_keymap(buf, 'n', '<ESC>', '<C-\\><C-n>:lua vim.api.nvim_win_close(win, true)<CR>', { silent = true })
+	vim.api.nvim_buf_set_keymap(buf, 'n', 'gf', '<C-w>gf', { silent = true })
+	vim.api.nvim_buf_set_option(buf, 'filetype', 'Jaq')
 	local win_height = math.ceil(vim.api.nvim_get_option("lines") * config.ui.float.height - 4)
 	local win_width = math.ceil(vim.api.nvim_get_option("columns") * config.ui.float.width)
 	local row = math.ceil((vim.api.nvim_get_option("lines") - win_height) / 2 - 1)
 	local col = math.ceil((vim.api.nvim_get_option("columns") - win_width) / 2)
 	local opts = { style = "minimal", relative = "editor", border = config.ui.float.border, width = win_width, height = win_height, row = row, col = col }
-	local Win = vim.api.nvim_open_win(Buf, true, opts)
+	local win = vim.api.nvim_open_win(buf, true, opts)
 	vim.fn.termopen(cmd)
 	if config.ui.startinsert then vim.cmd("startinsert") end
-	vim.api.nvim_win_set_option(Win, 'winhl', 'Normal:' .. config.ui.float.float_hl .. ',FloatBorder:' .. config.ui.float.border_hl)
-	vim.api.nvim_win_set_option(Win, 'winblend', config.ui.float.blend)
-	vim.api.nvim_buf_set_keymap(Buf, 'n', '<ESC>', '<C-\\><C-n>:lua vim.api.nvim_win_close(Win, true)<CR>', { silent = true })
-	vim.api.nvim_buf_set_keymap(Buf, 'n', 'gf', '<C-w>gf', { silent = true })
+	vim.api.nvim_win_set_option(win, 'winhl', 'Normal:' .. config.ui.float.float_hl .. ',FloatBorder:' .. config.ui.float.border_hl)
+	vim.api.nvim_win_set_option(win, 'winblend', config.ui.float.blend)
 end
 
 function M.setup(user_options) config = vim.tbl_deep_extend('force', config, user_options) end
@@ -75,7 +76,9 @@ function M.Jaq(type)
 				ran = true
 				break
 			elseif type == "term" then
-				vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new | term " .. cmd)
+				local buf = vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new | term " .. cmd)
+				vim.api.nvim_buf_set_keymap(buf, 'n', '<ESC>', '<C-\\><C-n>:bdelete!<CR>', { silent = true })
+				vim.api.nvim_buf_set_option(buf, 'filetype', 'Jaq')
 				if config.ui.startinsert then vim.cmd("startinsert") end
 				ran = true
 				break
