@@ -46,14 +46,14 @@ function M.setup(user_options) config = vim.tbl_deep_extend('force', config, use
 function M.Jaq(type)
 	local ran = false
 	for lang, cmd in next, config.cmds.internal, nil do
-		cmd = cmd:gsub("%%", vim.fn.expand('%'))
-		cmd = cmd:gsub("#", vim.fn.expand('#'))
-		cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'))
-		cmd = cmd:gsub("$filePath", vim.fn.expand('%:p'))
-		cmd = cmd:gsub("$fileAlt", vim.fn.expand('#'))
-		cmd = cmd:gsub("$file", vim.fn.expand('%'))
-		cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
 		if vim.bo.filetype == lang then
+			cmd = cmd:gsub("%%", vim.fn.expand('%'))
+			cmd = cmd:gsub("#", vim.fn.expand('#'))
+			cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'))
+			cmd = cmd:gsub("$filePath", vim.fn.expand('%:p'))
+			cmd = cmd:gsub("$fileAlt", vim.fn.expand('#'))
+			cmd = cmd:gsub("$file", vim.fn.expand('%'))
+			cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
 			vim.cmd(cmd)
 			ran = true
 			break
