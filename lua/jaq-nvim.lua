@@ -70,23 +70,20 @@ function M.Jaq(type)
 			cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
 			if type == "float" then
 				floatingWin(cmd)
-				ran = true
-				break
+				return ran == true
 			elseif type == "bang" then
 				vim.cmd("!" .. cmd)
-				ran = true
-				break
+				return ran == true
 			elseif type == "term" then
 				local buf = vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new | term " .. cmd)
 				vim.api.nvim_buf_set_keymap(buf, 'n', '<ESC>', '<C-\\><C-n>:bdelete!<CR>', { silent = true })
 				vim.api.nvim_buf_set_option(buf, 'filetype', 'Jaq')
 				if config.ui.startinsert then vim.cmd("startinsert") end
-				ran = true
-				break
+				return ran == true
 			end
 		end
 	end
-	if not ran then vim.cmd("echohl ErrorMsg | echo 'Error: No config for " .. vim.bo.filetype .. "' | echohl None") end
+	if not ran then vim.cmd("echohl ErrorMsg | echo 'Error: Invalid command' | echohl None") end
 end
 
 return M
