@@ -5,7 +5,8 @@ local config = {
 	cmds = {
 		default  = "float",
 		internal = {},
-		external = {}
+		external = {},
+		format   = {}
 	},
 	ui = {
 		startinsert = false,
@@ -27,7 +28,6 @@ local config = {
 local function floatingWin(cmd)
 	local buf = vim.api.nvim_create_buf(false, true)
 	vim.api.nvim_buf_set_keymap(buf, 'n', '<ESC>', '<C-\\><C-n>:lua vim.api.nvim_win_close(win, true)<CR>', { silent = true })
-	vim.api.nvim_buf_set_keymap(buf, 'n', 'gf', '<C-w>gf', { silent = true })
 	vim.api.nvim_buf_set_option(buf, 'filetype', 'Jaq')
 	local win_height = math.ceil(vim.api.nvim_get_option("lines") * config.ui.float.height - 4)
 	local win_width = math.ceil(vim.api.nvim_get_option("columns") * config.ui.float.width)
@@ -48,25 +48,35 @@ function M.Jaq(type)
 	for lang, cmd in next, config.cmds.internal, nil do
 		if vim.bo.filetype == lang then
 			cmd = cmd:gsub("%%", vim.fn.expand('%'))
-			cmd = cmd:gsub("#", vim.fn.expand('#'))
 			cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'))
 			cmd = cmd:gsub("$filePath", vim.fn.expand('%:p'))
-			cmd = cmd:gsub("$fileAlt", vim.fn.expand('#'))
 			cmd = cmd:gsub("$file", vim.fn.expand('%'))
 			cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
 			vim.cmd(cmd)
-			ran = true
-			break
+			return ran == true
 		end
 	end
 	type = type or config.cmds.default
+	for lang, cmd in next, config.cmds.format, nil do
+		cmd = cmd:gsub("%%", vim.fn.expand('%'))
+		cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'))
+		cmd = cmd:gsub("$filePath", vim.fn.expand('%:p'))
+		cmd = cmd:gsub("$file", vim.fn.expand('%'))
+		cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
+		if vim.bo.filetype == lang and type == "format" then
+			vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("edit")
+			return ran == true
+		elseif lang == "*" and type == "format" then
+			vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("edit")
+			return ran == true
+		end
+	end
 	for lang, cmd in next, config.cmds.external, nil do
 		if vim.bo.filetype == lang then
 			cmd = cmd:gsub("%%", vim.fn.expand('%'))
-			cmd = cmd:gsub("#", vim.fn.expand('#'))
 			cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'))
+			cmd = cmd:gsub("$filePath", vim.fn.expand('%:p'))
 			cmd = cmd:gsub("$file", vim.fn.expand('%'))
-			cmd = cmd:gsub("$fileAlt", vim.fn.expand('#'))
 			cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
 			if type == "float" then
 				floatingWin(cmd)
