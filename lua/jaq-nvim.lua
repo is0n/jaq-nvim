@@ -46,37 +46,26 @@ function M.setup(user_options) config = vim.tbl_deep_extend('force', config, use
 function M.Jaq(type)
 	type = type or config.cmds.default
 	for lang, cmd in next, config.cmds.format, nil do
-		cmd = cmd:gsub("%%", vim.fn.expand('%'))
-		cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'))
-		cmd = cmd:gsub("$filePath", vim.fn.expand('%:p'))
-		cmd = cmd:gsub("$file", vim.fn.expand('%'))
-		cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
 		if vim.bo.filetype == lang and type == "format" then
-			vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("edit")
+			cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
+			vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("checktime")
 			return
 		elseif lang == "*" and type == "format" then
-			vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("edit")
+			cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
+			vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("checktime")
 			return
 		end
 	end
 	for lang, cmd in next, config.cmds.internal, nil do
 		if vim.bo.filetype == lang then
-			cmd = cmd:gsub("%%", vim.fn.expand('%'))
-			cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'))
-			cmd = cmd:gsub("$filePath", vim.fn.expand('%:p'))
-			cmd = cmd:gsub("$file", vim.fn.expand('%'))
-			cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
+			cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
 			vim.cmd(cmd)
 			return
 		end
 	end
 	for lang, cmd in next, config.cmds.external, nil do
 		if vim.bo.filetype == lang then
-			cmd = cmd:gsub("%%", vim.fn.expand('%'))
-			cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'))
-			cmd = cmd:gsub("$filePath", vim.fn.expand('%:p'))
-			cmd = cmd:gsub("$file", vim.fn.expand('%'))
-			cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
+			cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
 			if type == "float" then
 				floatingWin(cmd)
 				return
