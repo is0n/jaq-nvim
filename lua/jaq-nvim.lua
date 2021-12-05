@@ -45,7 +45,6 @@ function M.setup(user_options) config = vim.tbl_deep_extend('force', config, use
 
 function M.Jaq(type)
 	type = type or config.cmds.default
-	local ran = false
 	for lang, cmd in next, config.cmds.format, nil do
 		cmd = cmd:gsub("%%", vim.fn.expand('%'))
 		cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'))
@@ -54,10 +53,8 @@ function M.Jaq(type)
 		cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
 		if vim.bo.filetype == lang and type == "format" then
 			vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("edit")
-			return ran == true
 		elseif lang == "*" and type == "format" then
 			vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("edit")
-			return ran == true
 		end
 	end
 	for lang, cmd in next, config.cmds.internal, nil do
@@ -68,7 +65,6 @@ function M.Jaq(type)
 			cmd = cmd:gsub("$file", vim.fn.expand('%'))
 			cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
 			vim.cmd(cmd)
-			return ran == true
 		end
 	end
 	for lang, cmd in next, config.cmds.external, nil do
@@ -80,20 +76,16 @@ function M.Jaq(type)
 			cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
 			if type == "float" then
 				floatingWin(cmd)
-				return ran == true
 			elseif type == "bang" then
 				vim.cmd("!" .. cmd)
-				return ran == true
 			elseif type == "term" then
 				local buf = vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new | term " .. cmd)
 				vim.api.nvim_buf_set_keymap(buf, 'n', '<ESC>', '<C-\\><C-n>:bdelete!<CR>', { silent = true })
 				vim.api.nvim_buf_set_option(buf, 'filetype', 'Jaq')
 				if config.ui.startinsert then vim.cmd("startinsert") end
-				return ran == true
 			end
 		end
 	end
-	if not ran then vim.cmd("echohl ErrorMsg | echo 'Error: Invalid command' | echohl None") end
 end
 
 return M
