@@ -44,19 +44,8 @@ end
 function M.setup(user_options) config = vim.tbl_deep_extend('force', config, user_options) end
 
 function M.Jaq(type)
-	local ran = false
-	for lang, cmd in next, config.cmds.internal, nil do
-		if vim.bo.filetype == lang then
-			cmd = cmd:gsub("%%", vim.fn.expand('%'))
-			cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'))
-			cmd = cmd:gsub("$filePath", vim.fn.expand('%:p'))
-			cmd = cmd:gsub("$file", vim.fn.expand('%'))
-			cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
-			vim.cmd(cmd)
-			return ran == true
-		end
-	end
 	type = type or config.cmds.default
+	local ran = false
 	for lang, cmd in next, config.cmds.format, nil do
 		cmd = cmd:gsub("%%", vim.fn.expand('%'))
 		cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'))
@@ -68,6 +57,17 @@ function M.Jaq(type)
 			return ran == true
 		elseif lang == "*" and type == "format" then
 			vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("edit")
+			return ran == true
+		end
+	end
+	for lang, cmd in next, config.cmds.internal, nil do
+		if vim.bo.filetype == lang then
+			cmd = cmd:gsub("%%", vim.fn.expand('%'))
+			cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'))
+			cmd = cmd:gsub("$filePath", vim.fn.expand('%:p'))
+			cmd = cmd:gsub("$file", vim.fn.expand('%'))
+			cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
+			vim.cmd(cmd)
 			return ran == true
 		end
 	end
