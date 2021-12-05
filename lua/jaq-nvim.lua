@@ -53,8 +53,10 @@ function M.Jaq(type)
 		cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
 		if vim.bo.filetype == lang and type == "format" then
 			vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("edit")
+			return
 		elseif lang == "*" and type == "format" then
 			vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("edit")
+			return
 		end
 	end
 	for lang, cmd in next, config.cmds.internal, nil do
@@ -65,6 +67,7 @@ function M.Jaq(type)
 			cmd = cmd:gsub("$file", vim.fn.expand('%'))
 			cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
 			vim.cmd(cmd)
+			return
 		end
 	end
 	for lang, cmd in next, config.cmds.external, nil do
@@ -76,13 +79,16 @@ function M.Jaq(type)
 			cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'))
 			if type == "float" then
 				floatingWin(cmd)
+				return
 			elseif type == "bang" then
 				vim.cmd("!" .. cmd)
+				return
 			elseif type == "term" then
 				local buf = vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new | term " .. cmd)
 				vim.api.nvim_buf_set_keymap(buf, 'n', '<ESC>', '<C-\\><C-n>:bdelete!<CR>', { silent = true })
 				vim.api.nvim_buf_set_option(buf, 'filetype', 'Jaq')
 				if config.ui.startinsert then vim.cmd("startinsert") end
+				return
 			end
 		end
 	end
