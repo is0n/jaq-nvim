@@ -130,6 +130,7 @@ The commands for `:Jaq` also have certain variables that can help in running cod
 - `$filePath` • Path to Current File
 - `$fileBase` • Basename of File (no extension)
 - `$dir` • Current Working Directory (CWD)
+- `$moduleName` • Python Module Name
 
 If you would like to format your code after writing to a file, you can use the following...
 ```lua
