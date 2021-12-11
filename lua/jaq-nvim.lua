@@ -21,6 +21,10 @@ local config = {
 		terminal = {
 			position = "bot",
 			size     = 10
+		},
+		quickfix = {
+			position = "bot",
+			size = 10
 		}
 	}
 }
@@ -43,43 +47,59 @@ end
 
 function M.setup(user_options) config = vim.tbl_deep_extend('force', config, user_options) end
 
+local function internal()
+	local cmd = config.cmds.internal[vim.bo.filetype]
+	if cmd ~= nil then
+		cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
+		vim.cmd(cmd)
+	else
+		vim.cmd("echohl ErrorMsg | echo 'Error: Invalid command' | echohl None")
+	end
+end
+
+local function format()
+	local cmd = config.cmds.format[vim.bo.filetype]
+	local global = config.cmds.format["*"]
+	if cmd ~= nil then
+		cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
+		vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("edit")
+	elseif global ~= nil then
+		global = global:gsub("%%", vim.fn.expand('%')); global = global:gsub("$fileBase", vim.fn.expand('%:r')); global = global:gsub("$filePath", vim.fn.expand('%:p')); global = global:gsub("$file", vim.fn.expand('%')); global = global:gsub("$dir", vim.fn.expand('%:p:h')); global = global:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
+		vim.cmd("write"); vim.cmd("silent !" .. global); vim.cmd("edit")
+	else
+		vim.cmd("echohl ErrorMsg | echo 'Error: Invalid command' | echohl None")
+	end
+end
+
+local function run(type)
+	local cmd = config.cmds.external[vim.bo.filetype]
+	if cmd ~= nil then
+		cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
+		if type == "float" then
+			floatingWin(cmd)
+		elseif type == "bang" then
+			vim.cmd("!" .. cmd)
+		elseif type == "quickfix" or type == "qf" then
+			vim.cmd('cex system("' .. cmd .. '") | ' .. config.ui.quickfix.position .. ' copen ' .. config.ui.quickfix.size)
+		elseif type == "term" then
+			local buf = vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new | term " .. cmd)
+			vim.api.nvim_buf_set_keymap(buf, 'n', '<ESC>', '<C-\\><C-n>:bdelete!<CR>', { silent = true })
+			vim.api.nvim_buf_set_option(buf, 'filetype', 'Jaq')
+			if config.ui.startinsert then vim.cmd("startinsert") end
+		end
+	else
+		vim.cmd("echohl ErrorMsg | echo 'Error: Invalid command' | echohl None")
+	end
+end
+
 function M.Jaq(type)
 	type = type or config.cmds.default
-	for lang, cmd in next, config.cmds.format, nil do
-		if vim.bo.filetype == lang and type == "format" then
-			cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
-			vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("checktime")
-			return
-		elseif lang == "*" and type == "format" then
-			cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
-			vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("checktime")
-			return
-		end
-	end
-	for lang, cmd in next, config.cmds.internal, nil do
-		if vim.bo.filetype == lang then
-			cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
-			vim.cmd(cmd)
-			return
-		end
-	end
-	for lang, cmd in next, config.cmds.external, nil do
-		if vim.bo.filetype == lang then
-			cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
-			if type == "float" then
-				floatingWin(cmd)
-				return
-			elseif type == "bang" then
-				vim.cmd("!" .. cmd)
-				return
-			elseif type == "term" then
-				local buf = vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new | term " .. cmd)
-				vim.api.nvim_buf_set_keymap(buf, 'n', '<ESC>', '<C-\\><C-n>:bdelete!<CR>', { silent = true })
-				vim.api.nvim_buf_set_option(buf, 'filetype', 'Jaq')
-				if config.ui.startinsert then vim.cmd("startinsert") end
-				return
-			end
-		end
+	if type == "format" then
+		format()
+	elseif type == "internal" then
+		internal()
+	else
+		run(type)
 	end
 end
 

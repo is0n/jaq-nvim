@@ -8,7 +8,7 @@
 
 <h1 align='center'>jaq-nvim</h1>
 
-`jaq-nvim` is **J**ust **A**nother **Q**uickrun plugin for Neovim that's written in less than **100 lines of Lua**. Inspired by [quickrun.vim](https://github.com/D0n9X1n/quickrun.vim). In short, it is a plugin that lets you run (and format) the code of any language with a single command.
+`jaq-nvim` is **J**ust **A**nother **Q**uickrun plugin for Neovim that's written in less than **150 lines of Lua**. Inspired by [quickrun.vim](https://github.com/D0n9X1n/quickrun.vim). In short, it is a plugin that lets you run (and format) the code of any language with a single command.
 
 ## Demo:
 
@@ -108,6 +108,13 @@ require('jaq-nvim').setup{
 			-- Size of terminal
 			size     = 10
 		}
+		quickfix = {
+			-- Position of quickfix window
+			position = "bot",
+
+			-- Size of quickfix window
+			size     = 10
+		}
 	}
 }
 ```
@@ -117,9 +124,11 @@ require('jaq-nvim').setup{
 `:Jaq` by default uses the `float` option to run code, however, both `bang` and `term` are appropriate terms. Append any of the following terms to the end of `:Jaq` to override the default value.
 
 - `float` • opens a floating window with `:lua vim.api.nvim_open_win()`
+- `quickfix` / `qf` • command output is placed in a quickfix
 - `term` • opens a terminal with `:terminal`
 - `bang` • opens a small window with `:!`
 - `format` • formats code with external programs
+- `internal` • runs a vim command
 
 Example: `:Jaq bang`
 
