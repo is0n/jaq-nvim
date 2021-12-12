@@ -1,5 +1,4 @@
 local M = {}
-local vim = vim
 
 local config = {
 	cmds = {
@@ -50,7 +49,7 @@ function M.setup(user_options) config = vim.tbl_deep_extend('force', config, use
 local function internal()
 	local cmd = config.cmds.internal[vim.bo.filetype]
 	if cmd ~= nil then
-		cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
+		cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g")); cmd = cmd:gsub("$altFile", vim.fn.expand('#'))
 		vim.cmd(cmd)
 	else
 		vim.cmd("echohl ErrorMsg | echo 'Error: Invalid command' | echohl None")
@@ -61,10 +60,10 @@ local function format()
 	local cmd = config.cmds.format[vim.bo.filetype]
 	local global = config.cmds.format["*"]
 	if cmd ~= nil then
-		cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
+		cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g")); cmd = cmd:gsub("$altFile", vim.fn.expand('#'))
 		vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("edit")
 	elseif global ~= nil then
-		global = global:gsub("%%", vim.fn.expand('%')); global = global:gsub("$fileBase", vim.fn.expand('%:r')); global = global:gsub("$filePath", vim.fn.expand('%:p')); global = global:gsub("$file", vim.fn.expand('%')); global = global:gsub("$dir", vim.fn.expand('%:p:h')); global = global:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
+		cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g")); cmd = cmd:gsub("$altFile", vim.fn.expand('#'))
 		vim.cmd("write"); vim.cmd("silent !" .. global); vim.cmd("edit")
 	else
 		vim.cmd("echohl ErrorMsg | echo 'Error: Invalid command' | echohl None")
@@ -74,7 +73,7 @@ end
 local function run(type)
 	local cmd = config.cmds.external[vim.bo.filetype]
 	if cmd ~= nil then
-		cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g"))
+		cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g")); cmd = cmd:gsub("$altFile", vim.fn.expand('#'))
 		if type == "float" then
 			floatingWin(cmd)
 		elseif type == "bang" then

@@ -138,6 +138,7 @@ The commands for `:Jaq` also have certain variables that can help in running cod
 - `$file` • Current File
 - `$filePath` • Path to Current File
 - `$fileBase` • Basename of File (no extension)
+- `$altFile` • Alternate File
 - `$dir` • Current Working Directory (CWD)
 - `$moduleName` • Python Module Name
 
