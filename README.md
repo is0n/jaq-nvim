@@ -8,7 +8,7 @@
 
 <h1 align='center'>jaq-nvim</h1>
 
-`jaq-nvim` is **J**ust **A**nother **Q**uickrun plugin for Neovim that's written in less than **150 lines of Lua**. Inspired by [quickrun.vim](https://github.com/D0n9X1n/quickrun.vim). In short, it is a plugin that lets you run (and format) the code of any language with a single command.
+`jaq-nvim` is **J**ust **A**nother **Q**uickrun plugin for Neovim that's written in less than **100 lines of Lua**. Inspired by [quickrun.vim](https://github.com/D0n9X1n/quickrun.vim). In short, it is a plugin that lets you run the code of any language with a single command.
 
 ## Demo:
 
@@ -63,20 +63,11 @@ require('jaq-nvim').setup{
 			sh = "sh %",
 		},
 
-		-- Uses external commands made for formatting code
-		format = {
-			sh = "shfmt -w %",
-
-			-- Config used for all filetypes without a config
-			["*"] = "gsed -i 's/[ \t]*$//' %"
-		},
-
 		-- Uses internal commands such as 'source' and 'luafile'
 		internal = {
 			lua = "luafile %",
 			vim = "source %"
 		}
-
 	},
 
 	-- UI settings
@@ -107,7 +98,8 @@ require('jaq-nvim').setup{
 
 			-- Size of terminal
 			size     = 10
-		}
+		},
+
 		quickfix = {
 			-- Position of quickfix window
 			position = "bot",
@@ -127,7 +119,6 @@ require('jaq-nvim').setup{
 - `quickfix` / `qf` • command output is placed in a quickfix
 - `term` • opens a terminal with `:terminal`
 - `bang` • opens a small window with `:!`
-- `format` • formats code with external programs
 - `internal` • runs a vim command
 
 Example: `:Jaq bang`
@@ -141,11 +132,6 @@ The commands for `:Jaq` also have certain variables that can help in running cod
 - `$altFile` • Alternate File
 - `$dir` • Current Working Directory (CWD)
 - `$moduleName` • Python Module Name
-
-If you would like to format your code after writing to a file, you can use the following...
-```lua
-vim.cmd [[ au! BufWritePost * Jaq format ]]
-```
 
 ## Similar Plugins:
 

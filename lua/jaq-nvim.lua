@@ -5,7 +5,6 @@ local config = {
 		default  = "float",
 		internal = {},
 		external = {},
-		format   = {}
 	},
 	ui = {
 		startinsert = false,
@@ -56,20 +55,6 @@ local function internal()
 	end
 end
 
-local function format()
-	local cmd = config.cmds.format[vim.bo.filetype]
-	local global = config.cmds.format["*"]
-	if cmd ~= nil then
-		cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g")); cmd = cmd:gsub("$altFile", vim.fn.expand('#'))
-		vim.cmd("write"); vim.cmd("silent !" .. cmd); vim.cmd("edit")
-	elseif global ~= nil then
-		cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g")); cmd = cmd:gsub("$altFile", vim.fn.expand('#'))
-		vim.cmd("write"); vim.cmd("silent !" .. global); vim.cmd("edit")
-	else
-		vim.cmd("echohl ErrorMsg | echo 'Error: Invalid command' | echohl None")
-	end
-end
-
 local function run(type)
 	local cmd = config.cmds.external[vim.bo.filetype]
 	if cmd ~= nil then
@@ -93,9 +78,7 @@ end
 
 function M.Jaq(type)
 	type = type or config.cmds.default
-	if type == "format" then
-		format()
-	elseif type == "internal" then
+	if type == "internal" then
 		internal()
 	else
 		run(type)
