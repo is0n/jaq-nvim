@@ -75,6 +75,10 @@ require('jaq-nvim').setup{
 		-- Start in insert mode
 		startinsert = false,
 
+		-- Switch back to current file
+		-- after using Jaq
+		wincmd      = false,
+
 		-- Floating Window settings
 		float = {
 			-- Floating window border (see ':h nvim_open_win')
