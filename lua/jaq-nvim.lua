@@ -8,7 +8,7 @@ local config = {
 	},
 	ui = {
 		startinsert = false,
-		wincmd      = true,
+		wincmd      = false,
 		float = {
 			border    = "none",
 			height    = 0.8,
