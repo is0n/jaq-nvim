@@ -82,6 +82,15 @@ local function run(type)
 			vim.cmd('TermExec cmd="' .. cmd .. '" size=' .. config.ui.toggleterm.size .. " direction=" .. config.ui.toggleterm.position)
 			if config.ui.startinsert then vim.cmd("startinsert") end
 			if config.ui.wincmd then vim.cmd("wincmd p") end
+		elseif type == "fterm" then
+			require("FTerm"):new({
+				cmd = cmd,
+				blend = config.ui.float.blend,
+				auto_close = false,
+				dimensions = { height = config.ui.float.height, width = config.ui.float.width },
+				border = config.ui.float.border,
+				hl = config.ui.float.float_hl
+			}):open()
 		end
 	else
 		vim.cmd("echohl ErrorMsg | echo 'Error: Invalid command' | echohl None")
