@@ -1,6 +1,6 @@
 vim.cmd [[
 	function! JaqCompletion(lead, cmd, cursor)
-		let valid_args = ['terminal', 'quickfix', 'qf', 'internal', 'bang', 'float']
+		let valid_args = ['terminal', 'quickfix', 'qf', 'internal', 'bang', 'float', 'toggleterm']
 		let l = len(a:lead) - 1
 		if l >= 0
 			let filtered_args = copy(valid_args)
