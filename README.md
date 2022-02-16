@@ -104,6 +104,14 @@ require('jaq-nvim').setup{
 			size     = 10
 		},
 
+		toggleterm = {
+			-- Position of terminal, one of "vertical" | "horizontal" | "window" | "float"
+			position = "horizontal",
+
+			-- Size of terminal
+			size     = 10
+		},
+
 		quickfix = {
 			-- Position of quickfix window
 			position = "bot",
@@ -122,6 +130,7 @@ require('jaq-nvim').setup{
 - `float` • opens a floating window with `:lua vim.api.nvim_open_win()`
 - `quickfix` / `qf` • command output is placed in a quickfix
 - `term` • opens a terminal with `:terminal`
+- `toggleterm` • opens a terminal using :TermExec from [akinsho/toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim)
 - `bang` • opens a small window with `:!`
 - `internal` • runs a vim command
 

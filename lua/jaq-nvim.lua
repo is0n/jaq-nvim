@@ -21,6 +21,10 @@ local config = {
 			position = "bot",
 			size     = 10
 		},
+		toggleterm = {
+			position = "horizontal",
+			size     = 10
+		},
 		quickfix = {
 			position = "bot",
 			size = 10
@@ -72,6 +76,10 @@ local function run(type)
 			local buf = vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new | term " .. cmd)
 			vim.api.nvim_buf_set_keymap(buf, 'n', '<ESC>', '<C-\\><C-n>:bdelete!<CR>', { silent = true })
 			vim.api.nvim_buf_set_option(buf, 'filetype', 'Jaq')
+			if config.ui.startinsert then vim.cmd("startinsert") end
+			if config.ui.wincmd then vim.cmd("wincmd p") end
+		elseif type == "toggleterm" then
+			vim.cmd('TermExec cmd="' .. cmd .. '" size=' .. config.ui.toggleterm.size .. " direction=" .. config.ui.toggleterm.position)
 			if config.ui.startinsert then vim.cmd("startinsert") end
 			if config.ui.wincmd then vim.cmd("wincmd p") end
 		end
