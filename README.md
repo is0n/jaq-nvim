@@ -79,7 +79,7 @@ require('jaq-nvim').setup{
 		-- after using Jaq
 		wincmd      = false,
 
-		-- Floating Window settings
+		-- Floating Window / FTerm settings
 		float = {
 			-- Floating window border (see ':h nvim_open_win')
 			border    = "none",
@@ -87,6 +87,8 @@ require('jaq-nvim').setup{
 			-- Num from `0 - 1` for measurements
 			height    = 0.8,
 			width     = 0.8,
+			x         = 0.5,
+			y         = 0.5,
 
 			-- Highlight group for floating window/border (see ':h winhl')
 			border_hl = "FloatBorder",
@@ -130,6 +132,7 @@ require('jaq-nvim').setup{
 - `float` • opens a floating window with `:lua vim.api.nvim_open_win()`
 - `quickfix` / `qf` • command output is placed in a quickfix
 - `term` • opens a terminal with `:terminal`
+- `fterm` •  opens a terminal using a new FTerm from [numToStr/FTerm.nvim](https://github.com/numToStr/FTerm.nvim)
 - `toggleterm` • opens a terminal using :TermExec from [akinsho/toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim)
 - `bang` • opens a small window with `:!`
 - `internal` • runs a vim command
