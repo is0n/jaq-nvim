@@ -13,6 +13,8 @@ local config = {
 			border    = "none",
 			height    = 0.8,
 			width     = 0.8,
+			x         = 0.5,
+			y         = 0.5,
 			border_hl = "FloatBorder",
 			float_hl  = "Normal",
 			blend     = 0
@@ -38,8 +40,8 @@ local function floatingWin(cmd)
 	vim.api.nvim_buf_set_option(buf, 'filetype', 'Jaq')
 	local win_height = math.ceil(vim.api.nvim_get_option("lines") * config.ui.float.height - 4)
 	local win_width = math.ceil(vim.api.nvim_get_option("columns") * config.ui.float.width)
-	local row = math.ceil((vim.api.nvim_get_option("lines") - win_height) / 2 - 1)
-	local col = math.ceil((vim.api.nvim_get_option("columns") - win_width) / 2)
+	local row = math.ceil((vim.api.nvim_get_option("lines") - win_height) * config.ui.float.y - 1)
+	local col = math.ceil((vim.api.nvim_get_option("columns") - win_width) * config.ui.float.x)
 	local opts = { style = "minimal", relative = "editor", border = config.ui.float.border, width = win_width, height = win_height, row = row, col = col }
 	local win = vim.api.nvim_open_win(buf, true, opts)
 	vim.fn.termopen(cmd)
@@ -82,6 +84,15 @@ local function run(type)
 			vim.cmd('TermExec cmd="' .. cmd .. '" size=' .. config.ui.toggleterm.size .. " direction=" .. config.ui.toggleterm.position)
 			if config.ui.startinsert then vim.cmd("startinsert") end
 			if config.ui.wincmd then vim.cmd("wincmd p") end
+		elseif type == "fterm" then
+			require("FTerm"):new({
+				cmd = cmd,
+				blend = config.ui.float.blend,
+				auto_close = false,
+				dimensions = { height = config.ui.float.height, width = config.ui.float.width, x = config.ui.float.x, y = config.ui.float.y },
+				border = config.ui.float.border,
+				hl = config.ui.float.float_hl
+			}):open()
 		end
 	else
 		vim.cmd("echohl ErrorMsg | echo 'Error: Invalid command' | echohl None")
