@@ -21,6 +21,7 @@ local config = {
 		},
 		terminal = {
 			position = "bot",
+			line_no  = false,
 			size     = 10
 		},
 		toggleterm = {
@@ -74,12 +75,13 @@ local function run(type)
 		elseif type == "quickfix" or type == "qf" then
 			vim.cmd('cex system("' .. cmd .. '") | ' .. config.ui.quickfix.position .. ' copen ' .. config.ui.quickfix.size)
 			if config.ui.wincmd then vim.cmd("wincmd p") end
-		elseif type == "term" then
+		elseif type == "term" or type == "terminal" then
 			local buf = vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new | term " .. cmd)
 			vim.api.nvim_buf_set_keymap(buf, 'n', '<ESC>', '<C-\\><C-n>:bdelete!<CR>', { silent = true })
 			vim.api.nvim_buf_set_option(buf, 'filetype', 'Jaq')
 			if config.ui.startinsert then vim.cmd("startinsert") end
 			if config.ui.wincmd then vim.cmd("wincmd p") end
+			if not config.ui.terminal.line_no then vim.cmd("setlocal nonumber") vim.cmd("setlocal norelativenumber") end
 		elseif type == "toggleterm" then
 			vim.cmd('TermExec cmd="' .. cmd .. '" size=' .. config.ui.toggleterm.size .. " direction=" .. config.ui.toggleterm.position)
 			if config.ui.startinsert then vim.cmd("startinsert") end
