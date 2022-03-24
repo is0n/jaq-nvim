@@ -103,7 +103,7 @@ require('jaq-nvim').setup{
 			position = "bot",
 
 			-- Open the terminal without line numbers
-			line_no = false
+			line_no = false,
 
 			-- Size of terminal
 			size     = 10
