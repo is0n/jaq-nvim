@@ -76,7 +76,8 @@ local function run(type)
 			vim.cmd('cex system("' .. cmd .. '") | ' .. config.ui.quickfix.position .. ' copen ' .. config.ui.quickfix.size)
 			if config.ui.wincmd then vim.cmd("wincmd p") end
 		elseif type == "term" or type == "terminal" then
-			local buf = vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new | term " .. cmd)
+			vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new | term " .. cmd)
+			local buf = vim.api.nvim_get_current_buf()
 			vim.api.nvim_buf_set_keymap(buf, 'n', '<ESC>', '<C-\\><C-n>:bdelete!<CR>', { silent = true })
 			vim.api.nvim_buf_set_option(buf, 'filetype', 'Jaq')
 			if config.ui.startinsert then vim.cmd("startinsert") end
