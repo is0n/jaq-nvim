@@ -49,7 +49,7 @@ require('jaq-nvim').setup{
 	-- Commands used with 'Jaq'
 	cmds = {
 		-- Default UI used (see `Usage` for options)
-		default = "float"
+		default = "float",
 
 		-- Uses external commands such as 'g++' and 'cargo'
 		external = {
