@@ -84,9 +84,8 @@ local function run(type)
 			if config.ui.wincmd then vim.cmd("wincmd p") end
 			if not config.ui.terminal.line_no then vim.cmd("setlocal nonumber") vim.cmd("setlocal norelativenumber") end
 		elseif type == "toggleterm" then
-			vim.cmd('TermExec cmd="' .. cmd .. '" size=' .. config.ui.toggleterm.size .. " direction=" .. config.ui.toggleterm.position)
+			vim.cmd(string.format('TermExec cmd="%s" size=%d direction="%s" go_back=%d', cmd, config.ui.toggleterm.size, config.ui.toggleterm.position, config.ui.wincmd and 1 or 0))
 			if config.ui.startinsert then vim.cmd("startinsert") end
-			if config.ui.wincmd then vim.cmd("wincmd p") end
 		elseif type == "fterm" then
 			require("FTerm"):new({
 				cmd = cmd,
