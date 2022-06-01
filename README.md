@@ -8,7 +8,7 @@
 
 <h1 align='center'>jaq-nvim</h1>
 
-`jaq-nvim` is **J**ust **A**nother **Q**uickrun plugin for Neovim that's written in less than **100 lines of Lua**. Inspired by [quickrun.vim](https://github.com/D0n9X1n/quickrun.vim). In short, it is a plugin that lets you run the code of any language with a single command.
+`jaq-nvim` is **J**ust **A**nother **Q**uickrun plugin for Neovim that was inspired by [quickrun.vim](https://github.com/D0n9X1n/quickrun.vim). In short, it is a plugin that lets you run the code of any language with a single command.
 
 ## Demo:
 
