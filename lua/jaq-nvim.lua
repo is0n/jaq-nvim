@@ -9,6 +9,7 @@ local config = {
 	ui = {
 		startinsert = false,
 		wincmd      = false,
+        autosave    = false,
 		float = {
 			border    = "none",
 			height    = 0.8,
@@ -68,6 +69,7 @@ local function run(type)
 	local cmd = config.cmds.external[vim.bo.filetype]
 	if cmd ~= nil then
 		cmd = cmd:gsub("%%", vim.fn.expand('%')); cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r')); cmd = cmd:gsub("$filePath", vim.fn.expand('%:p')); cmd = cmd:gsub("$file", vim.fn.expand('%')); cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h')); cmd = cmd:gsub("$moduleName", vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".", "g")); cmd = cmd:gsub("$altFile", vim.fn.expand('#'))
+        if config.ui.autosave then vim.cmd("write") end
 		if type == "float" then
 			floatingWin(cmd)
 		elseif type == "bang" then
