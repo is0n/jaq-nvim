@@ -79,9 +79,9 @@ require('jaq-nvim').setup{
 		-- after using Jaq
 		wincmd      = false,
 
-        -- Auto-save the current file
-        -- before executing it
-        autosave    = true,
+                -- Auto-save the current file
+                -- before executing it
+                autosave    = true,
 
 		-- Floating Window / FTerm settings
 		float = {
