@@ -45,7 +45,7 @@ local function floatingWin(cmd)
 	local opts = { style = "minimal", relative = "editor", border = config.ui.float.border, width = win_width, height = win_height, row = row, col = col }
 	M.win = vim.api.nvim_open_win(M.buf, true, opts)
 	vim.api.nvim_buf_set_option(M.buf, 'filetype', 'Jaq')
-	vim.api.nvim_buf_set_keymap(M.buf, 'n', '<ESC>', '<C-\\><C-n>:lua vim.api.nvim_win_close(' .. M.win .. ', true)<CR>', { silent = true })
+	vim.api.nvim_buf_set_keymap(M.buf, 'n', '<ESC>', '<cmd>:lua vim.api.nvim_win_close(' .. M.win .. ', true)<CR>', { silent = true })
 	vim.fn.termopen(cmd)
 	if config.ui.startinsert then vim.cmd("startinsert") end
 	if config.ui.wincmd then vim.cmd("wincmd p") end
