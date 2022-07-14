@@ -1,10 +1,5 @@
-[![GitHub Stars](https://img.shields.io/github/stars/is0n/jaq-nvim.svg?style=social&label=Star&maxAge=2592000)](https://github.com/is0n/jaq-nvim/stargazers/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
-[![Last Commit](https://img.shields.io/github/last-commit/is0n/jaq-nvim)](https://github.com/is0n/jaq-nvim/pulse)
-[![GitHub Open Issues](https://img.shields.io/github/issues/is0n/jaq-nvim.svg)](https://github.com/is0n/jaq-nvim/issues/)
-[![GitHub Closed Issues](https://img.shields.io/github/issues-closed/is0n/jaq-nvim.svg)](https://github.com/is0n/jaq-nvim/issues?q=is%3Aissue+is%3Aclosed)
-[![GitHub License](https://img.shields.io/github/license/is0n/jaq-nvim?logo=GNU)](https://github.com/is0n/jaq-nvim/blob/master/LICENSE)
-[![Lua](https://img.shields.io/badge/Lua-2C2D72?logo=lua&logoColor=white)](https://github.com/is0n/fm-nvim/search?l=lua)
+<img src="https://img.shields.io/github/stars/is0n/jaq-nvim.svg?style=for-the-badge&label=stars" align="left"/>
+<img src="https://img.shields.io/github/license/is0n/jaq-nvim?style=for-the-badge&logo=GNU" align="right"/>
 
 <h1 align='center'>jaq-nvim</h1>
 
@@ -12,154 +7,132 @@
 
 ## Demo:
 
-![Demo](https://user-images.githubusercontent.com/57725322/143307370-861066e8-cae0-4641-8185-25c031baafbb.gif)
-
-<p>
-<details>
-<summary>Screenshots</summary>
-
-##### Run C++ Code w/ :Jaq Bang
-
-![Jaq Bang](https://user-images.githubusercontent.com/57725322/143304594-45df53fc-8aeb-424b-b688-70779b7c9533.png)
-
-##### Run C++ Code w/ :Jaq Float
-
-![Jaq Float](https://user-images.githubusercontent.com/57725322/143304610-053d2593-53a9-4839-9bb3-c61e0de66022.png)
-
-##### Run C++ Code w/ :Jaq Term
-
-![Jaq Term](https://user-images.githubusercontent.com/57725322/143304617-b0d13aa6-368a-4968-8b89-909d6ddbcf60.png)
-
-</details>
-</p>
+| Type Info                                                                      | Demonstration                                                                                                      |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| <ins>Internal:</ins> <br/> Runs a vim command using `:`.                       | ![Internal](https://user-images.githubusercontent.com/57725322/178857660-6e0f9eff-cef2-47c6-85f0-4696697e95d7.png) |
+| <ins>Float:</ins> <br/> Opens a floating window with `vim.api.nvim_open_win()` | ![Float](https://user-images.githubusercontent.com/57725322/178857665-a771d37c-b705-4bd2-99f6-9812bb37a898.png)    |
+| <ins>Terminal:</ins> <br/> Opens a terminal with `:terminal`                   | ![Terminal](https://user-images.githubusercontent.com/57725322/178857666-8536e793-3977-4a10-a611-a3aaec975870.png) |
+| <ins>Bang:</ins> <br/> Opens a small window with `:!`                          | ![Bang](https://user-images.githubusercontent.com/57725322/178857662-fe4d133f-24d2-4298-89fd-fd9fc3fbf326.png)     |
+| <ins>Quickfix:</ins> <br/> Command output is placed in a quickfix window       | ![Quickfix](https://user-images.githubusercontent.com/57725322/178857664-1d6593be-2ea6-4a00-9531-36b3a097a02a.png) |
 
 ## Installation:
 
-- [packer.nvim](https://github.com/wbthomason/packer.nvim):
+#### [packer.nvim](https://github.com/wbthomason/packer.nvim):
   ```lua
-  use {'is0n/jaq-nvim'}
+  use {"is0n/jaq-nvim"}
   ```
 
-## Configuration:
-
-The following is an example config...
-
+## Example Lua Config:
 ```lua
 require('jaq-nvim').setup{
-	-- Commands used with 'Jaq'
-	cmds = {
-		-- Default UI used (see `Usage` for options)
-		default = "float",
+  cmds = {
+    -- Uses vim commands
+    internal = {
+      lua = "luafile %",
+      vim = "source %"
+    },
 
-		-- Uses external commands such as 'g++' and 'cargo'
-		external = {
-			typescript = "deno run %",
-			javascript = "node %",
-			markdown = "glow %",
-			python = "python3 %",
-			rust = "rustc % && ./$fileBase && rm $fileBase",
-			cpp = "g++ % -o $fileBase && ./$fileBase",
-			go = "go run %",
-			sh = "sh %",
-		},
+    -- Uses shell commands
+    external = {
+      markdown = "glow %",
+      python   = "python3 %",
+      go       = "go run %",
+      sh       = "sh %"
+    }
+  },
 
-		-- Uses internal commands such as 'source' and 'luafile'
-		internal = {
-			lua = "luafile %",
-			vim = "source %"
-		}
-	},
+  behavior = {
+    -- Default type
+    default     = "float",
 
-	-- UI settings
-	ui = {
-		-- Start in insert mode
-		startinsert = false,
+    -- Start in insert mode
+    startinsert = false,
 
-		-- Switch back to current file
-		-- after using Jaq
-		wincmd      = false,
+    -- Use `wincmd p` on startup
+    wincmd      = false,
 
-                -- Auto-save the current file
-                -- before executing it
-                autosave    = true,
+    -- Auto-save files
+    autosave    = false
+  },
 
-		-- Floating Window / FTerm settings
-		float = {
-			-- Floating window border (see ':h nvim_open_win')
-			border    = "none",
+  ui = {
+    float = {
+      -- See ':h nvim_open_win'
+      border    = "none",
 
-			-- Num from `0 - 1` for measurements
-			height    = 0.8,
-			width     = 0.8,
-			x         = 0.5,
-			y         = 0.5,
+      -- See ':h winhl'
+      winhl     = "Normal",
+      borderhl  = "FloatBorder",
 
-			-- Highlight group for floating window/border (see ':h winhl')
-			border_hl = "FloatBorder",
-			float_hl  = "Normal",
+      -- See ':h winblend'
+      winblend  = 0,
 
-			-- Floating Window Transparency (see ':h winblend')
-			blend     = 0
-		},
+      -- Num from `0-1` for measurements
+      height    = 0.8,
+      width     = 0.8,
+      x         = 0.5,
+      y         = 0.5
+    },
 
-		terminal = {
-			-- Position of terminal
-			position = "bot",
+    terminal = {
+      -- Window position
+      position = "bot",
 
-			-- Open the terminal without line numbers
-			line_no = false,
+      -- Window size
+      size     = 10
 
-			-- Size of terminal
-			size     = 10
-		},
+      -- Disable line numbers
+      line_no  = false,
+    },
 
-		toggleterm = {
-			-- Position of terminal, one of "vertical" | "horizontal" | "window" | "float"
-			position = "horizontal",
+    quickfix = {
+      -- Window position
+      position = "bot",
 
-			-- Size of terminal
-			size     = 10
-		},
+      -- Window size
+      size     = 10
+    }
+  }
+```
 
-		quickfix = {
-			-- Position of quickfix window
-			position = "bot",
+## Example JSON Config:
+```json
+{
+  "internal": {
+    "lua": "luafile %",
+    "vim": "source %"
+  },
 
-			-- Size of quickfix window
-			size     = 10
-		}
-	}
+  "external": {
+    "markdown": "glow %",
+    "python": "python3 %",
+    "go": "go run %",
+    "sh": "sh %"
+  }
 }
 ```
 
+In the current working directory, `Jaq` will search for a file called `.jaq.json`.
+
+This config file will be used for running commands, both external and internal.
+
 ## Usage:
 
-`:Jaq` by default uses the `float` option to run code, however, both `bang` and `term` are appropriate terms. Append any of the following terms to the end of `:Jaq` to override the default value.
+`:Jaq` by default uses the `float` type to run code. The default can be changed (see `Example Lua Config`).
 
-- `float` • opens a floating window with `:lua vim.api.nvim_open_win()`
-- `quickfix` / `qf` • command output is placed in a quickfix
-- `term` • opens a terminal with `:terminal`
-- `fterm` •  opens a terminal using a new FTerm from [numToStr/FTerm.nvim](https://github.com/numToStr/FTerm.nvim)
-- `toggleterm` • opens a terminal using :TermExec from [akinsho/toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim)
-- `bang` • opens a small window with `:!`
-- `internal` • runs a vim command
+To use any other type, provide any of the arguments seen in `Demonstration`.
 
 Example: `:Jaq bang`
 
-The commands for `:Jaq` also have certain variables that can help in running code. You can put any of the following in your `require('jaq-nvim').setup()`...
+The commands for `:Jaq` also have certain variables that can help in running code.
 
-- `%` • Current File
-- `$file` • Current File
-- `$filePath` • Path to Current File
-- `$fileBase` • Basename of File (no extension)
-- `$altFile` • Alternate File
-- `$dir` • Current Working Directory (CWD)
-- `$moduleName` • Python Module Name
-
-## Similar Plugins:
-
-- [pianocomposer321/yabs.nvim](https://github.com/pianocomposer321/yabs.nvim) • "Yet Another Build System for Neovim, written in Lua."
-- [CRAG666/code_runner.nvim](https://github.com/CRAG666/code_runner.nvim) • "The best code runner you could have [...]"
+You can put any of the following in `require('jaq-nvim').setup()` or `.jaq.json` ...
+- `%` / `$file`    • Current File
+- `#` / `$altFile` • Alternate File
+- `$dir`           • Current Working Directory
+- `$filePath`      • Path to Current File
+- `$fileBase`      • Basename of File (no extension)
+- `$moduleName`    • Python Module Name
 
 <div align="center" id="madewithlua">
 
