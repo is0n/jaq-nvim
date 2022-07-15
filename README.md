@@ -82,7 +82,7 @@ require('jaq-nvim').setup{
       size     = 10,
 
       -- Disable line numbers
-      line_no  = false,
+      line_no  = false
     },
 
     quickfix = {
