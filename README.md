@@ -93,6 +93,7 @@ require('jaq-nvim').setup{
       size     = 10
     }
   }
+}
 ```
 
 ## Example JSON Config:
