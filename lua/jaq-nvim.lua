@@ -233,7 +233,18 @@ end
 
 function M.Jaq(type)
   local file = io.open(vim.fn.expand('%:p:h') .. "/.jaq.json", "r")
-  type = type or config.behavior.default
+
+  -- Check if the filetype is in config.cmds.internal
+  if vim.tbl_contains(vim.tbl_keys(config.cmds.internal), vim.bo.filetype) then
+    -- Exit if the type was passed and isn't "internal"
+    if type and type ~= "internal" then
+      vim.cmd("echohl ErrorMsg | echo 'Error: Invalid type for internal command' | echohl None")
+      return
+    end
+    type = "internal"
+  else
+    type = type or config.behavior.default
+  end
 
   if file then
     project(type, file)
