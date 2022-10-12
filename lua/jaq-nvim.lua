@@ -231,8 +231,29 @@ local function project(type, file)
   run(type, cmd)
 end
 
+-- Get the root of a git project
+local function get_git_root()
+  local handle = io.popen "git rev-parse --show-toplevel 2>&1"
+  local result = handle:read "*a"
+  handle:close()
+
+  if string.match(result, "fatal: not a git repository") then
+    return
+  end
+
+  return result:sub(1, -2) -- remove "\n" at the end
+end
+
+
 function M.Jaq(type)
-  local file = io.open(vim.fn.expand('%:p:h') .. "/.jaq.json", "r")
+  -- Look for .jaq.json in cwd
+  local file = io.open(vim.fn.expand("%:p:h") .. "/.jaq.json", "r")
+
+  -- Look for .jaq.json in the root of a git project
+  local root = get_git_root()
+  if root then
+    file = io.open(root .. "/.jaq.json", "r")
+  end
 
   -- Check if the filetype is in config.cmds.internal
   if vim.tbl_contains(vim.tbl_keys(config.cmds.internal), vim.bo.filetype) then
