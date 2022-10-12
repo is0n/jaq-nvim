@@ -96,7 +96,7 @@ local function float(cmd)
   vim.api.nvim_win_set_option(M.win, "winblend", config.ui.float.winblend)
 
   vim.api.nvim_buf_set_option(M.buf, "filetype", "Jaq")
-  vim.api.nvim_buf_set_keymap(M.buf, 'n', '<ESC>', '<cmd>:lua vim.api.nvim_win_close(' .. M.win .. ', true)<CR>', { silent = true })
+  vim.api.nvim_buf_set_keymap(M.buf, "n", "<ESC>", "<cmd>:lua vim.api.nvim_win_close(" .. M.win .. ", true)<CR>", { silent = true })
 
   vim.fn.termopen(cmd)
 
@@ -117,7 +117,7 @@ local function term(cmd)
   M.buf = vim.api.nvim_get_current_buf()
 
   vim.api.nvim_buf_set_option(M.buf, "filetype", "Jaq")
-  vim.api.nvim_buf_set_keymap(M.buf, 'n', '<ESC>', '<cmd>:bdelete!<CR>', { silent = true })
+  vim.api.nvim_buf_set_keymap(M.buf, "n", "<ESC>", "<cmd>:bdelete!<CR>", { silent = true })
 
   if config.behavior.startinsert then
     vim.cmd("startinsert")
@@ -147,16 +147,16 @@ end
 -- HUUUUUUUUUUUUUUUUUUUUUUUGE kudos and thanks to
 -- https://github.com/hown3d for this function <3
 local function substitute(cmd)
-  cmd = cmd:gsub("%%", vim.fn.expand('%'));
-  cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'));
-  cmd = cmd:gsub("$filePath", vim.fn.expand('%:p'));
-  cmd = cmd:gsub("$file", vim.fn.expand('%'));
-  cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'));
+  cmd = cmd:gsub("%%", vim.fn.expand("%"));
+  cmd = cmd:gsub("$fileBase", vim.fn.expand("%:r"));
+  cmd = cmd:gsub("$filePath", vim.fn.expand("%:p"));
+  cmd = cmd:gsub("$file", vim.fn.expand("%"));
+  cmd = cmd:gsub("$dir", vim.fn.expand("%:p:h"));
   cmd = cmd:gsub("$moduleName",
     vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".",
       "g"));
-  cmd = cmd:gsub("#", vim.fn.expand('#'))
-  cmd = cmd:gsub("$altFile", vim.fn.expand('#'))
+  cmd = cmd:gsub("#", vim.fn.expand("#"))
+  cmd = cmd:gsub("$altFile", vim.fn.expand("#"))
 
   return cmd
 end
@@ -231,8 +231,29 @@ local function project(type, file)
   run(type, cmd)
 end
 
+-- Get the root of a git project
+local function get_git_root()
+  local handle = io.popen "git rev-parse --show-toplevel 2>&1"
+  local result = handle:read "*a"
+  handle:close()
+
+  if string.match(result, "fatal: not a git repository") then
+    return
+  end
+
+  return result:sub(1, -2) -- remove "\n" at the end
+end
+
+
 function M.Jaq(type)
-  local file = io.open(vim.fn.expand('%:p:h') .. "/.jaq.json", "r")
+  -- Look for .jaq.json in cwd
+  local file = io.open(vim.fn.expand("%:p:h") .. "/.jaq.json", "r")
+
+  -- Look for .jaq.json in the root of a git project
+  local root = get_git_root()
+  if root then
+    file = io.open(root .. "/.jaq.json", "r")
+  end
 
   -- Check if the filetype is in config.cmds.internal
   if vim.tbl_contains(vim.tbl_keys(config.cmds.internal), vim.bo.filetype) then
