@@ -177,7 +177,7 @@ local function internal(cmd)
   vim.cmd(cmd)
 end
 
-local function run(type, cmd)
+local function run(type, cmd, ...)
   cmd = cmd or config.cmds.external[vim.bo.filetype]
 
   if not cmd then
@@ -189,7 +189,13 @@ local function run(type, cmd)
     vim.cmd("silent write")
   end
 
+  local args = ""
+  for _, v in ipairs({ ... }) do
+    args = args .. " " .. v
+  end
+
   cmd = substitute(cmd)
+  cmd = cmd .. args
   if type == "float" then
     float(cmd)
     return
@@ -231,8 +237,15 @@ local function project(type, file)
   run(type, cmd)
 end
 
-function M.Jaq(type)
+function M.Jaq(type, ...)
   local file = io.open(vim.fn.expand('%:p:h') .. "/.jaq.json", "r")
+
+  -- if there is additional arguments, then first run system exec
+  local cnt = select("#", ...)
+  if cnt > 0 then
+    run(type, ...)
+    return
+  end
 
   -- Check if the filetype is in config.cmds.internal
   if vim.tbl_contains(vim.tbl_keys(config.cmds.internal), vim.bo.filetype) then
