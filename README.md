@@ -135,6 +135,12 @@ You can put any of the following in `require('jaq-nvim').setup()` or `.jaq.json`
 - `$fileBase`      • Basename of File (no extension)
 - `$moduleName`    • Python Module Name
 
+you can run any system command in any context (regardless current filetype),   
+`:Jaq {type} {sys ...args}`, execute system command and print with type.  
+ex. (Jaq float ls -al) will do `ls -al` and show in passed type.
+
+
+
 <div align="center" id="madewithlua">
 
 [![Lua](https://img.shields.io/badge/Made%20with%20Lua-blue.svg?style=for-the-badge&logo=lua)](#madewithlua)

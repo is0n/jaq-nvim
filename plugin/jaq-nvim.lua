@@ -9,8 +9,8 @@ vim.cmd [[
 				return filtered_args
 			endif
 		endif
-		return valid_args
+		return valid_args . cmd
 	endfunction
 
-	command! -nargs=? -complete=customlist,JaqCompletion Jaq :lua require('jaq-nvim').Jaq(<f-args>)
+	command! -nargs=* -complete=customlist,JaqCompletion Jaq :lua require('jaq-nvim').Jaq(<f-args>)
 ]]
