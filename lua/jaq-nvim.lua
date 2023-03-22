@@ -97,6 +97,7 @@ local function float(cmd)
 
   vim.api.nvim_buf_set_option(M.buf, "filetype", "Jaq")
   vim.api.nvim_buf_set_keymap(M.buf, 'n', '<ESC>', '<cmd>:lua vim.api.nvim_win_close(' .. M.win .. ', true)<CR>', { silent = true })
+  vim.api.nvim_buf_set_keymap(M.buf, "n", "<C-c>", "<cmd>:lua vim.api.nvim_win_close(" .. M.win .. ", true)<CR>", { silent = true })
 
   vim.fn.termopen(cmd)
 
