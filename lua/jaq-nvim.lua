@@ -165,8 +165,7 @@ local function internal(cmd)
   cmd = cmd or config.cmds.internal[vim.bo.filetype]
 
   if not cmd then
-    vim.cmd("echohl ErrorMsg | echo 'Error: Invalid command' | echohl None")
-    return
+    error("Jaq-nvim: Invalid command")
   end
 
   if config.behavior.autosave then
@@ -181,8 +180,7 @@ local function run(type, cmd)
   cmd = cmd or config.cmds.external[vim.bo.filetype]
 
   if not cmd then
-    vim.cmd("echohl ErrorMsg | echo 'Error: Invalid command' | echohl None")
-    return
+    error("Jaq-nvim: Invalid command")
   end
 
   if config.behavior.autosave then
@@ -204,7 +202,7 @@ local function run(type, cmd)
     return
   end
 
-  vim.cmd("echohl ErrorMsg | echo 'Error: Invalid type' | echohl None")
+  error("Jaq-nvim: Invalid type")
 end
 
 local function project(type, file)
@@ -213,7 +211,7 @@ local function project(type, file)
   io.close(file)
 
   if not status then
-    vim.cmd("echohl ErrorMsg | echo 'Error: Invalid json' | echohl None")
+    error("Jaq-nvim: Invalid json")
     return
   end
 
@@ -238,8 +236,7 @@ function M.Jaq(type)
   if vim.tbl_contains(vim.tbl_keys(config.cmds.internal), vim.bo.filetype) then
     -- Exit if the type was passed and isn't "internal"
     if type and type ~= "internal" then
-      vim.cmd("echohl ErrorMsg | echo 'Error: Invalid type for internal command' | echohl None")
-      return
+      error("Jaq-nvim: Invalid type for internal command")
     end
     type = "internal"
   else
