@@ -112,7 +112,9 @@ local function float(cmd)
 end
 
 local function term(cmd)
-  vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new | term " .. cmd)
+  vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new")
+
+  vim.fn.termopen(cmd)
 
   M.buf = vim.api.nvim_get_current_buf()
 
