@@ -1,10 +1,7 @@
 local M = {}
 
 local config = {
-  cmds = {
-    internal = {},
-    external = {}
-  },
+  cmds = {},
 
   behavior = {
     default     = "float",
@@ -165,23 +162,8 @@ local function substitute(cmd)
   return cmd
 end
 
-local function internal(cmd)
-  cmd = cmd or config.cmds.internal[vim.bo.filetype]
-
-  if not cmd then
-    error("Jaq-nvim: Invalid command")
-  end
-
-  if config.behavior.autosave then
-    vim.cmd("silent write")
-  end
-
-  cmd = substitute(cmd)
-  vim.cmd(cmd)
-end
-
 local function run(type, cmd)
-  cmd = cmd or config.cmds.external[vim.bo.filetype]
+  cmd = cmd or config.cmds[vim.bo.filetype]
 
   if not cmd then
     error("Jaq-nvim: Invalid command")
@@ -191,22 +173,27 @@ local function run(type, cmd)
     vim.cmd("silent write")
   end
 
+  -- Check if the command is an internal command
+  -- by looking if the first character is a ':'
+  if cmd:sub(1, 1) == ":" then
+    type = "internal"
+  end
+
   cmd = substitute(cmd)
+
   if type == "float" then
     float(cmd)
-    return
   elseif type == "bang" then
     vim.cmd("!" .. cmd)
-    return
   elseif type == "quickfix" then
     quickfix(cmd)
-    return
   elseif type == "terminal" then
     term(cmd)
-    return
+  elseif type == "internal" then
+    vim.cmd(cmd)
+  else
+    error("Jaq-nvim: Invalid type")
   end
-
-  error("Jaq-nvim: Invalid type")
 end
 
 local function project(type, file)
@@ -219,15 +206,7 @@ local function project(type, file)
     return
   end
 
-  if type == "internal" then
-    local cmd = table.internal[vim.bo.filetype]
-    cmd = substitute(cmd)
-
-    internal(cmd)
-    return
-  end
-
-  local cmd = table.external[vim.bo.filetype]
+  local cmd = table.cmds[vim.bo.filetype]
   cmd = substitute(cmd)
 
   run(type, cmd)
@@ -236,24 +215,10 @@ end
 function M.Jaq(type)
   local file = io.open(vim.fn.expand('%:p:h') .. "/.jaq.json", "r")
 
-  -- Check if the filetype is in config.cmds.internal
-  if vim.tbl_contains(vim.tbl_keys(config.cmds.internal), vim.bo.filetype) then
-    -- Exit if the type was passed and isn't "internal"
-    if type and type ~= "internal" then
-      error("Jaq-nvim: Invalid type for internal command")
-    end
-    type = "internal"
-  else
-    type = type or config.behavior.default
-  end
+  type = type or config.behavior.default
 
   if file then
     project(type, file)
-    return
-  end
-
-  if type == "internal" then
-    internal()
     return
   end
 

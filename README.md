@@ -26,19 +26,13 @@
 ```lua
 require('jaq-nvim').setup{
   cmds = {
-    -- Uses vim commands
-    internal = {
-      lua = "luafile %",
-      vim = "source %"
-    },
-
-    -- Uses shell commands
-    external = {
-      markdown = "glow %",
-      python   = "python3 %",
-      go       = "go run %",
-      sh       = "sh %"
-    }
+    -- Prefix with a ':' to use a vim command
+    lua = ":luafile %",
+    vim = ":source %"
+    markdown = "glow %",
+    python = "python3 %",
+    go = "go run %",
+    sh = "sh %"
   },
 
   behavior = {
@@ -97,19 +91,15 @@ require('jaq-nvim').setup{
 ```
 
 ## Example JSON Config:
+
 ```json
 {
-  "internal": {
-    "lua": "luafile %",
-    "vim": "source %"
-  },
-
-  "external": {
-    "markdown": "glow %",
-    "python": "python3 %",
-    "go": "go run %",
-    "sh": "sh %"
-  }
+  "lua": ":luafile %",
+  "vim": ":source %",
+  "markdown": "glow %",
+  "python": "python3 %",
+  "go": "go run %",
+  "sh": "sh %"
 }
 ```
 
