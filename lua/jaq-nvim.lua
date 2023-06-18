@@ -15,14 +15,14 @@ local config = {
 
   ui = {
     float = {
-      border    = "none",
-      winhl     = "Normal",
-      borderhl  = "FloatBorder",
-      height    = 0.8,
-      width     = 0.8,
-      x         = 0.5,
-      y         = 0.5,
-      winblend  = 0
+      border   = "none",
+      winhl    = "Normal",
+      borderhl = "FloatBorder",
+      height   = 0.8,
+      width    = 0.8,
+      x        = 0.5,
+      y        = 0.5,
+      winblend = 0
     },
 
     terminal = {
@@ -96,7 +96,8 @@ local function float(cmd)
   vim.api.nvim_win_set_option(M.win, "winblend", config.ui.float.winblend)
 
   vim.api.nvim_buf_set_option(M.buf, "filetype", "Jaq")
-  vim.api.nvim_buf_set_keymap(M.buf, 'n', '<ESC>', '<cmd>:lua vim.api.nvim_win_close(' .. M.win .. ', true)<CR>', { silent = true })
+  vim.api.nvim_buf_set_keymap(M.buf, 'n', '<ESC>', '<cmd>:lua vim.api.nvim_win_close(' .. M.win .. ', true)<CR>',
+    { silent = true })
 
   vim.fn.termopen(cmd)
 
