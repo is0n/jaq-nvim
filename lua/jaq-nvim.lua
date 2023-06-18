@@ -127,7 +127,8 @@ local function term(cmd)
   end
 
   if not config.ui.terminal.line_no then
-    vim.cmd("setlocal nonumber | setlocal norelativenumber")
+    vim.opt_local.number = false
+    vim.opt_local.relativenumber = false
   end
 
   if config.behavior.wincmd then
