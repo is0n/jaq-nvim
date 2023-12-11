@@ -3,39 +3,39 @@ local M = {}
 local config = {
   cmds = {
     internal = {},
-    external = {}
+    external = {},
   },
 
   behavior = {
-    default     = "float",
+    default = "float",
     startinsert = false,
-    wincmd      = false,
-    autosave    = false
+    wincmd = false,
+    autosave = false,
   },
 
   ui = {
     float = {
-      border    = "none",
-      winhl     = "Normal",
-      borderhl  = "FloatBorder",
-      height    = 0.8,
-      width     = 0.8,
-      x         = 0.5,
-      y         = 0.5,
-      winblend  = 0
+      border = "none",
+      winhl = "Normal",
+      borderhl = "FloatBorder",
+      height = 0.8,
+      width = 0.8,
+      x = 0.5,
+      y = 0.5,
+      winblend = 0,
     },
 
     terminal = {
       position = "bot",
-      line_no  = false,
-      size     = 10
+      line_no = false,
+      size = 10,
     },
 
     quickfix = {
       position = "bot",
-      size     = 10
-    }
-  }
+      size = 10,
+    },
+  },
 }
 
 function M.setup(user_opts)
@@ -56,20 +56,20 @@ local function dimensions(opts)
     width = width,
     height = height,
     col = col,
-    row = row
+    row = row,
   }
 end
 
 local function resize()
   local dim = dimensions(config)
   vim.api.nvim_win_set_config(M.win, {
-    style    = "minimal",
+    style = "minimal",
     relative = "editor",
-    border   = config.ui.float.border,
-    height   = dim.height,
-    width    = dim.width,
-    col      = dim.col,
-    row      = dim.row
+    border = config.ui.float.border,
+    height = dim.height,
+    width = dim.width,
+    col = dim.col,
+    row = dim.row,
   })
 end
 
@@ -82,21 +82,28 @@ local function float(cmd)
 
   M.buf = vim.api.nvim_create_buf(false, true)
   M.win = vim.api.nvim_open_win(M.buf, true, {
-    style    = "minimal",
+    style = "minimal",
     relative = "editor",
-    border   = config.ui.float.border,
-    height   = dim.height,
-    width    = dim.width,
-    col      = dim.col,
-    row      = dim.row
+    border = config.ui.float.border,
+    height = dim.height,
+    width = dim.width,
+    col = dim.col,
+    row = dim.row,
   })
 
-  vim.api.nvim_win_set_option(M.win, "winhl", ("Normal:%s"):format(config.ui.float.winhl))
-  vim.api.nvim_win_set_option(M.win, "winhl", ("FloatBorder:%s"):format(config.ui.float.borderhl))
-  vim.api.nvim_win_set_option(M.win, "winblend", config.ui.float.winblend)
+  vim.api.nvim_set_option_value("winhl", ("Normal:%s"):format(config.ui.float.winhl), { win = M.win })
+  vim.api.nvim_set_option_value("winhl", ("FloatBorder:%s"):format(config.ui.float.borderhl), { win = M.win })
+  vim.api.nvim_set_option_value("winblend", config.ui.float.winblend, { win = M.win })
 
-  vim.api.nvim_buf_set_option(M.buf, "filetype", "Jaq")
-  vim.api.nvim_buf_set_keymap(M.buf, 'n', '<ESC>', '<cmd>:lua vim.api.nvim_win_close(' .. M.win .. ', true)<CR>', { silent = true })
+  vim.api.nvim_set_option_value("filetype", "Jaq", { buf = M.buf })
+
+  vim.api.nvim_buf_set_keymap(
+    M.buf,
+    "n",
+    "<ESC>",
+    "<cmd>:lua vim.api.nvim_win_close(" .. M.win .. ", true)<CR>",
+    { silent = true }
+  )
 
   vim.fn.termopen(cmd)
 
@@ -116,8 +123,8 @@ local function term(cmd)
 
   M.buf = vim.api.nvim_get_current_buf()
 
-  vim.api.nvim_buf_set_option(M.buf, "filetype", "Jaq")
-  vim.api.nvim_buf_set_keymap(M.buf, 'n', '<ESC>', '<cmd>:bdelete!<CR>', { silent = true })
+  vim.api.nvim_set_option_value("filetype", "Jaq", { buf = M.buf })
+  vim.api.nvim_buf_set_keymap(M.buf, "n", "<ESC>", "<cmd>:bdelete!<CR>", { silent = true })
 
   if config.behavior.startinsert then
     vim.cmd("startinsert")
@@ -133,11 +140,7 @@ local function term(cmd)
 end
 
 local function quickfix(cmd)
-  vim.cmd(
-    'cex system("' .. cmd .. '") | ' ..
-    config.ui.quickfix.position ..
-    ' copen ' ..
-    config.ui.quickfix.size)
+  vim.cmd('cex system("' .. cmd .. '") | ' .. config.ui.quickfix.position .. " copen " .. config.ui.quickfix.size)
 
   if config.behavior.wincmd then
     vim.cmd("wincmd p")
@@ -147,16 +150,22 @@ end
 -- HUUUUUUUUUUUUUUUUUUUUUUUGE kudos and thanks to
 -- https://github.com/hown3d for this function <3
 local function substitute(cmd)
-  cmd = cmd:gsub("%%", vim.fn.expand('%'));
-  cmd = cmd:gsub("$fileBase", vim.fn.expand('%:r'));
-  cmd = cmd:gsub("$filePath", vim.fn.expand('%:p'));
-  cmd = cmd:gsub("$file", vim.fn.expand('%'));
-  cmd = cmd:gsub("$dir", vim.fn.expand('%:p:h'));
-  cmd = cmd:gsub("$moduleName",
-    vim.fn.substitute(vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"), "\\", ".",
-      "g"));
-  cmd = cmd:gsub("#", vim.fn.expand('#'))
-  cmd = cmd:gsub("$altFile", vim.fn.expand('#'))
+  cmd = cmd:gsub("%%", vim.fn.expand("%"))
+  cmd = cmd:gsub("$fileBase", vim.fn.expand("%:r"))
+  cmd = cmd:gsub("$filePath", vim.fn.expand("%:p"))
+  cmd = cmd:gsub("$file", vim.fn.expand("%"))
+  cmd = cmd:gsub("$dir", vim.fn.expand("%:p:h"))
+  cmd = cmd:gsub(
+    "$moduleName",
+    vim.fn.substitute(
+      vim.fn.substitute(vim.fn.fnamemodify(vim.fn.expand("%:r"), ":~:."), "/", ".", "g"),
+      "\\",
+      ".",
+      "g"
+    )
+  )
+  cmd = cmd:gsub("#", vim.fn.expand("#"))
+  cmd = cmd:gsub("$altFile", vim.fn.expand("#"))
 
   return cmd
 end
@@ -177,7 +186,25 @@ local function internal(cmd)
   vim.cmd(cmd)
 end
 
-local function run(type, cmd)
+local function execute_command(cmd_type, selected_cmd)
+  if selected_cmd == nil then
+    return
+  end
+  selected_cmd = substitute(selected_cmd)
+  if cmd_type == "float" then
+    float(selected_cmd)
+  elseif cmd_type == "bang" then
+    vim.cmd("!" .. selected_cmd)
+  elseif cmd_type == "quickfix" then
+    quickfix(selected_cmd)
+  elseif cmd_type == "terminal" then
+    term(selected_cmd)
+  else
+    vim.cmd("echohl ErrorMsg | echo 'Error: Invalid type' | echohl None")
+  end
+end
+
+local function run(cmd_type, cmd)
   cmd = cmd or config.cmds.external[vim.bo.filetype]
 
   if not cmd then
@@ -189,22 +216,23 @@ local function run(type, cmd)
     vim.cmd("silent write")
   end
 
-  cmd = substitute(cmd)
-  if type == "float" then
-    float(cmd)
-    return
-  elseif type == "bang" then
-    vim.cmd("!" .. cmd)
-    return
-  elseif type == "quickfix" then
-    quickfix(cmd)
-    return
-  elseif type == "terminal" then
-    term(cmd)
-    return
+  if type(cmd) == "table" then
+    vim.ui.select(cmd, { prompt = "Select a command: ", kind = "Jaq" }, function(selected_cmd)
+      execute_command(cmd_type, selected_cmd)
+    end)
+  else
+    execute_command(cmd)
+  end
+end
+
+local function run_custom(cmd_type)
+  if config.behavior.autosave then
+    vim.cmd("silent write")
   end
 
-  vim.cmd("echohl ErrorMsg | echo 'Error: Invalid type' | echohl None")
+  vim.ui.input({ prompt = "Run command: ", kind = "Jaq" }, function(selected_cmd)
+    execute_command(cmd_type, selected_cmd)
+  end)
 end
 
 local function project(type, file)
@@ -232,7 +260,7 @@ local function project(type, file)
 end
 
 function M.Jaq(type)
-  local file = io.open(vim.fn.expand('%:p:h') .. "/.jaq.json", "r")
+  local file = io.open(vim.fn.expand("%:p:h") .. "/.jaq.json", "r")
 
   -- Check if the filetype is in config.cmds.internal
   if vim.tbl_contains(vim.tbl_keys(config.cmds.internal), vim.bo.filetype) then
@@ -257,6 +285,12 @@ function M.Jaq(type)
   end
 
   run(type)
+end
+
+function M.JaqRun(type)
+  type = type or config.behavior.default
+
+  run_custom(type)
 end
 
 return M
