@@ -221,7 +221,7 @@ local function run(cmd_type, cmd)
             execute_command(cmd_type, selected_cmd)
         end)
     else
-        execute_command(cmd)
+        execute_command(cmd_type, cmd)
     end
 end
 
