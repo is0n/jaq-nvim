@@ -28,16 +28,16 @@ require('jaq-nvim').setup{
   cmds = {
     -- Uses vim commands
     internal = {
-      lua = "luafile %",
-      vim = "source %"
+      lua = 'luafile "%"',
+      vim = 'source "%"',
     },
 
     -- Uses shell commands
     external = {
-      markdown = "glow %",
-      python   = "python3 %",
-      go       = "go run %",
-      sh       = "sh %"
+      markdown = 'glow "%"',
+      python   = 'python3 "%"',
+      go       = 'go run "%"',
+      sh       = 'sh "%"',
     }
   },
 
