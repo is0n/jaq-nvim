@@ -43,16 +43,19 @@ require('jaq-nvim').setup{
 
   behavior = {
     -- Default type
-    default     = "float",
+    default       = "float",
 
     -- Start in insert mode
-    startinsert = false,
+    startinsert   = false,
 
     -- Use `wincmd p` on startup
-    wincmd      = false,
+    wincmd        = false,
 
     -- Auto-save files
-    autosave    = false
+    autosave      = false,
+
+    -- Close existing Jaq buffers
+    closeexisting = false
   },
 
   ui = {

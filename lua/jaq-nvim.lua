@@ -7,10 +7,11 @@ local config = {
   },
 
   behavior = {
-    default     = "float",
-    startinsert = false,
-    wincmd      = false,
-    autosave    = false
+    default       = "float",
+    startinsert   = false,
+    wincmd        = false,
+    autosave      = false,
+    closeexisting = false
   },
 
   ui = {
@@ -112,6 +113,15 @@ local function float(cmd)
 end
 
 local function term(cmd)
+  if config.behavior.closeexisting then
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+      local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+      if filetype == "Jaq" then
+        vim.api.nvim_buf_delete(bufnr, { force = true })
+      end
+    end
+  end
+
   vim.cmd(config.ui.terminal.position .. " " .. config.ui.terminal.size .. "new | term " .. cmd)
 
   M.buf = vim.api.nvim_get_current_buf()
