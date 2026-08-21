@@ -113,7 +113,7 @@ require('jaq-nvim').setup{
 }
 ```
 
-In the current working directory, `Jaq` will search for a file called `.jaq.json`.
+In the current file directory, `Jaq` will search for a file called `.jaq.json`. If not found, `Jaq` will search for it in the current working directory as a fallback.
 
 This config file will be used for running commands, both external and internal.
 
