@@ -234,6 +234,10 @@ end
 function M.Jaq(type)
   local file = io.open(vim.fn.expand('%:p:h') .. "/.jaq.json", "r")
 
+  if not file then
+    file = io.open(vim.fn.getcwd() .. "/.jaq.json", "r")
+  end
+
   -- Check if the filetype is in config.cmds.internal
   if vim.tbl_contains(vim.tbl_keys(config.cmds.internal), vim.bo.filetype) then
     -- Exit if the type was passed and isn't "internal"
